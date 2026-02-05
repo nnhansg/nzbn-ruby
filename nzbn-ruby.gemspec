@@ -5,12 +5,12 @@ require_relative 'lib/nzbn/version'
 Gem::Specification.new do |spec|
   spec.name          = 'nzbn-ruby'
   spec.version       = Nzbn::VERSION
-  spec.authors       = ['NZBN Ruby Gem Contributors']
-  spec.email         = ['']
+  spec.authors       = ['Nhan Nguyen']
+  spec.email         = ['nnhansg@gmail.com']
 
   spec.summary       = 'Ruby client for the New Zealand Business Number (NZBN) API'
   spec.description   = 'A Ruby gem for interacting with the NZBN API v5. Search entities, manage watchlists, and access NZ business data.'
-  spec.homepage      = 'https://github.com/nzbn/nzbn-ruby'
+  spec.homepage      = 'https://github.com/nnhansg/nzbn-ruby'
   spec.license       = 'MIT'
 
   spec.metadata['homepage_uri'] = spec.homepage
