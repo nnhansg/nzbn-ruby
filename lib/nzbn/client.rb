@@ -109,8 +109,6 @@ module Nzbn
 
     def connection
       @connection ||= Faraday.new(url: configuration.base_url) do |conn|
-        conn.request :json
-        conn.response :json, content_type: /\bjson$/
         conn.adapter Faraday.default_adapter
 
         conn.options.timeout = configuration.timeout
@@ -135,7 +133,7 @@ module Nzbn
         when :get, :delete
           req.params = data unless data.empty?
         else
-          req.body = data
+          req.body = JSON.generate(data) unless data.empty?
         end
       end
 
@@ -156,24 +154,34 @@ module Nzbn
     end
 
     def handle_response(response)
+      body = parse_json(response.body)
+
       case response.status
       when 200..299
-        response.body
+        body
       when 400
-        raise ValidationError.new(response: response.body, status: response.status)
+        raise ValidationError.new(response: body, status: response.status)
       when 401
-        raise AuthenticationError.new('Authentication failed', response: response.body, status: response.status)
+        raise AuthenticationError.new('Authentication failed', response: body, status: response.status)
       when 403
-        raise AuthorizationError.new('Authorization denied', response: response.body, status: response.status)
+        raise AuthorizationError.new('Authorization denied', response: body, status: response.status)
       when 404
-        raise NotFoundError.new('Resource not found', response: response.body, status: response.status)
+        raise NotFoundError.new('Resource not found', response: body, status: response.status)
       when 412
-        raise PreconditionFailedError.new('Precondition failed', response: response.body, status: response.status)
+        raise PreconditionFailedError.new('Precondition failed', response: body, status: response.status)
       when 500..599
-        raise ServerError.new('Server error', response: response.body, status: response.status)
+        raise ServerError.new('Server error', response: body, status: response.status)
       else
-        raise ApiError.new("Unexpected response: #{response.status}", response: response.body, status: response.status)
+        raise ApiError.new("Unexpected response: #{response.status}", response: body, status: response.status)
       end
+    end
+
+    def parse_json(body)
+      return nil if body.nil? || body.empty?
+
+      JSON.parse(body)
+    rescue JSON::ParserError
+      body
     end
   end
 end
