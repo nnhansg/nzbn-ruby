@@ -22,13 +22,14 @@ Gem::Specification.new do |spec|
       (f == __FILE__) || f.match(%r{\A(?:(?:bin|test|spec|features)/|\.(?:git|travis|circleci)|appveyor)})
     end
   end
+
   spec.files += Dir['lib/**/*.rb']
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'faraday', '>= 1.0', '< 3.0'
-  spec.add_dependency 'faraday-multipart', '~> 1.0'
+  spec.add_dependency 'faraday', '~> 1.0'
+  spec.add_dependency 'json', '~> 2.1'
 
-  spec.add_development_dependency 'bundler', '~> 2.0'
+  spec.add_development_dependency 'bundler', '~> 1.0'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'webmock', '~> 3.0'
