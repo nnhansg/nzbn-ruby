@@ -6,7 +6,7 @@ RSpec.describe Nzbn do
   describe 'VERSION' do
     it 'has a version number' do
       expect(Nzbn::VERSION).not_to be_nil
-      expect(Nzbn::VERSION).to eq('0.1.3')
+      expect(Nzbn::VERSION).to eq('0.1.4')
     end
   end
 

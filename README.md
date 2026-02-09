@@ -33,10 +33,13 @@ gem install nzbn-ruby
 Configure the gem with your NZBN API key (obtain from [api.business.govt.nz](https://api.business.govt.nz)):
 
 ```ruby
+require 'logger'
+
 Nzbn.configure do |config|
   config.api_key = 'your-api-key'
   config.base_url = 'https://api.business.govt.nz/gateway/nzbn/v5'  # default
   config.timeout = 30  # optional, default 30 seconds
+  config.logger = Logger.new(STDOUT)  # optional, enables request/response logging
 end
 ```
 

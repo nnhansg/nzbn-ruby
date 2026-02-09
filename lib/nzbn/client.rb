@@ -113,15 +113,14 @@ module Nzbn
 
         conn.options.timeout = configuration.timeout
         conn.options.open_timeout = configuration.open_timeout
-
-        if configuration.logger
-          conn.response :logger, configuration.logger
-        end
       end
     end
 
     def request(method, path, data, headers)
       request_id = SecureRandom.uuid
+      full_url = "#{configuration.base_url}#{path}"
+
+      log_request(method, full_url, request_id, data)
 
       merged_headers = default_headers(request_id).merge(headers)
 
@@ -137,11 +136,27 @@ module Nzbn
         end
       end
 
+      log_response(response, request_id)
       handle_response(response)
     rescue Faraday::TimeoutError => e
       raise TimeoutError, "Request timed out: #{e.message}"
     rescue Faraday::ConnectionFailed => e
       raise ConnectionError, "Connection failed: #{e.message}"
+    end
+
+    def log_request(method, url, request_id, data)
+      return unless configuration.logger
+
+      configuration.logger.info("[NZBN] Request ID: #{request_id}")
+      configuration.logger.info("[NZBN] #{method.to_s.upcase} #{url}")
+      configuration.logger.debug("[NZBN] Request data: #{data.inspect}") unless data.empty?
+    end
+
+    def log_response(response, request_id)
+      return unless configuration.logger
+
+      configuration.logger.info("[NZBN] Response ID: #{request_id} - Status: #{response.status}")
+      configuration.logger.debug("[NZBN] Response body: #{response.body[0..500]}...")
     end
 
     def default_headers(request_id)
